@@ -28,7 +28,7 @@ export default class App {
   }
   startServer() {
     this.server.listen(this.PORT, () => {
-      console.info(`[Server]: Running On http://localhost:${this.PORT}`);
+      console.info(`[Server]: Running On https://pavf-gelj.onrender.com`);
     });
   }
   startServerDev() {
@@ -39,13 +39,13 @@ export default class App {
           this.PORT = this.PORT + 1;
           this.server.close();
           this.server.listen(this.PORT, () => {
-            console.info(`[Server]: Running On http://localhost:${this.PORT}`);
+            console.info(`[Server]: Running On https://pavf-gelj.onrender.com`);
           });
         }, 1000);
       }
     });
     this.server.listen(this.PORT, () => {
-      console.info(`[Server]: Running On http://localhost:${this.PORT}`);
+      console.info(`[Server]: Running On https://pavf-gelj.onrender.com`);
     });
   }
 }
