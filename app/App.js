@@ -1,51 +1,60 @@
-import { createServer } from 'http';
+import https from 'http';
 import express from 'express';
-import mainRouter from '../routes/mainRouter.js';
-import authRouter from '../routes/authRouter.js';
 import cors from 'cors';
-import { corsOptions } from '../config/settings.js';
-// import { config } from 'dotenv';
+import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+import cookieParser from 'cookie-parser';
+import compression from 'compression';
+import fileUpload from 'express-fileupload';
+import dotenv from 'dotenv';
+import routes from '../routes/routes.js';
+import logger from '../utils/logger.js';
+import {
+  routeNotFoundMiddleware,
+  defaultErrorHandler,
+} from '../middlewares/middleware.js';
 
-export default class App {
-  constructor() {
-    this.initServer();
+class App {
+  constructor({ port }) {
+    dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+
+    this.PORT = port;
+    this.serverInit();
     this.loadPlugins();
     this.loadRoutes();
-    this.startServer();
+    this.loadExceptionMiddlewares();
   }
-  initServer() {
+  serverInit() {
     this.app = express();
-    this.server = createServer(this.app);
-    this.PORT = process.env.PORT || 8000;
+    this.server = https.createServer(
+          this.app
+    );
   }
+  loadDevPlugins() {}
   loadPlugins() {
     this.app.use(express.json());
-    this.app.use(cors(corsOptions));
+    this.app.use(cors());
+    this.app.use(helmet());
+    this.app.use(mongoSanitize());
+    this.app.use(cookieParser());
+    this.app.use(compression());
+    this.app.use(fileUpload({ useTempFiles: true }));
   }
   loadRoutes() {
-    this.app.use('/api', mainRouter);
-    this.app.use('/api/auth', authRouter);
+    this.app.use('/api/v1', routes);
+  }
+  loadExceptionMiddlewares() {
+    this.app.use(routeNotFoundMiddleware);
+    this.app.use(defaultErrorHandler);
   }
   startServer() {
     this.server.listen(this.PORT, () => {
-      console.info(`[Server]: Running On https://pavf-gelj.onrender.com`);
-    });
-  }
-  startServerDev() {
-    this.server.on('error', (e) => {
-      if (e.code === 'EADDRINUSE') {
-        console.error('Address in use, retrying...');
-        setTimeout(() => {
-          this.PORT = this.PORT + 1;
-          this.server.close();
-          this.server.listen(this.PORT, () => {
-            console.info(`[Server]: Running On https://pavf-gelj.onrender.com`);
-          });
-        }, 1000);
+      if (process.env.NODE_ENV !== 'production') {
+        logger.info(`[Server]: Running On http://localhost:${this.PORT}`);
       }
-    });
-    this.server.listen(this.PORT, () => {
-      console.info(`[Server]: Running On https://pavf-gelj.onrender.com`);
+      logger.info(`[Process Id]: PID ${process.ppid}`);
     });
   }
 }
+
+export default App;
