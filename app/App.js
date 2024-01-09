@@ -51,6 +51,9 @@ class App {
     this.server.listen(this.PORT, () => {
       if (process.env.NODE_ENV !== 'production') {
         logger.info(`[Server]: Running On http://localhost:${this.PORT}`);
+       }
+       else{ 
+        logger.info(`[Server]: Running On https://pavf-gelj.onrender.com`);
       }
       logger.info(`[Process Id]: PID ${process.ppid}`);
     });
