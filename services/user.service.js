@@ -2,7 +2,10 @@ import ApiError, { StatusCodes } from '../errors/ApiError.js';
 import User from '../models/User.js';
 import ResetPasswordToken from '../models/ResetPasswordToken.js';
 export const findUser = async (userId) => {
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).populate(
+    'role',
+    '-_id -slug -__v -createdAt -updatedAt'
+  );
   if (!user)
     throw new ApiError('Invalid User Request', StatusCodes.BAD_REQUEST);
   return user;
