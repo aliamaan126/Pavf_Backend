@@ -10,6 +10,6 @@ const routes = new express.Router();
 routes.use('/', mainRouter);
 routes.use('/auth', authRouter);
 routes.use('/profile', auth, userRouter);
-routes.use('/device', auth, deviceRouter);
+routes.use('/device', deviceRouter);
 
 export default routes;
