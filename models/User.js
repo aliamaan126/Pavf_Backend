@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../services/token.service.js';
+import maap from 'mongoose-autopopulate';
 
 const UserSchema = new mongoose.Schema(
   {
@@ -30,17 +31,18 @@ const UserSchema = new mongoose.Schema(
       type: String,
       trim: true,
       maxlength: 20,
-      default: 'first Name',
+      default: '',
     },
     lastname: {
       type: String,
       trim: true,
       maxlength: 20,
-      default: 'last Name',
+      default: '',
     },
     role: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Role',
+      autopopulate:{select: 'slug'}
     },
   },
   {
@@ -48,7 +50,7 @@ const UserSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
+UserSchema.plugin(maap);
 UserSchema.pre('save', async function (next) {
   try {
     if (this.isNew) {

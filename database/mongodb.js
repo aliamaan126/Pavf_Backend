@@ -1,9 +1,12 @@
 import mongoose from 'mongoose';
 import logger from '../utils/logger.js';
+import dbConfig from '../config/db.config.js';
 
+const server = dbConfig.local.mongo.uri;
+// const server = dbConfig.server.mongo.uri;
 const mongodbConnect = () => {
   mongoose.connect(
-    `mongodb+srv://aliamaan126:f5UkKvxM5rNAWm3N@pavf.xdyjfey.mongodb.net/PAVF_Mobile?retryWrites=true&w=majority`
+    server
   );
 };
 

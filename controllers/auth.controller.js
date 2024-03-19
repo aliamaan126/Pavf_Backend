@@ -48,9 +48,13 @@ export const register = async (req, res, next) => {
       path: '/api/v1/auth/refresh-token',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
+    res.cookie('token', token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
     return res
       .status(StatusCodes.CREATED)
-      .json({ access_token: token, user: newUser.newUserResponse() });
+      .json({ access_token: token, refersh_token: refresh_token, user: newUser.newUserResponse() });
   } catch (error) {
     next(error);
   }
@@ -81,9 +85,13 @@ export const login = async (req, res, next) => {
       path: '/api/v1/auth/refresh-token',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
+    res.cookie('token', token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
     return res
       .status(StatusCodes.OK)
-      .json({ access_token: token, user: loggedUser.loginResponse() });
+      .json({ access_token: token, refersh_token: refresh_token, user: loggedUser.loginResponse() });
   } catch (error) {
     next(error);
   }

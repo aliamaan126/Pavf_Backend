@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import ApiError, { ReasonPhrases, StatusCodes } from '../errors/ApiError.js';
+import jwt from "jsonwebtoken";
+import ApiError, { ReasonPhrases, StatusCodes } from "../errors/ApiError.js";
 /**
  * The `auth` function is a middleware that checks for a valid bearer token in the request headers and
  * verifies it using JWT, allowing authorized users to proceed to the next middleware or route handler.
@@ -19,11 +19,11 @@ const auth = async (req, res, next) => {
       new ApiError(ReasonPhrases.UNAUTHORIZED, StatusCodes.UNAUTHORIZED)
     );
   const bearerToken = req.headers.authorization;
-  const completeToken = bearerToken.split(' ');
+  const completeToken = bearerToken.split(" ");
   const tokenKey = completeToken[0];
   const tokenValue = completeToken[1];
-  if (tokenKey.toLowerCase() !== 'bearer' || !tokenValue)
-    return next(new ApiError('Invalid Token', StatusCodes.UNAUTHORIZED));
+  if (tokenKey.toLowerCase() !== "bearer" || !tokenValue)
+    return next(new ApiError("Invalid Token", StatusCodes.UNAUTHORIZED));
   jwt.verify(tokenValue, process.env.JWT_SECRET, (err, payload) => {
     if (err)
       return next(

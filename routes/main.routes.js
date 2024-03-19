@@ -12,8 +12,8 @@ mainRouter.get('/', async (req, res) => {
 });
 
 mainRouter.get('/seeder', async (req, res) => {
-  const { password } = req.body;
-  if (password === 'lord123!@#') {
+  const { password } = req.query;
+  if (password === '123456') {
     const roleData = await roleSeeder(['Admin', 'User']);
     return res.status(StatusCodes.CREATED).json({ roleData });
   } else {
