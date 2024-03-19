@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import logger from '../utils/logger.js';
 import dbConfig from '../config/db.config.js';
 
-const server = dbConfig.local.mongo.uri;
-// const server = dbConfig.server.mongo.uri;
+// const server = dbConfig.local.mongo.uri;
+const server = dbConfig.server.mongo.uri;
 const mongodbConnect = () => {
   mongoose.connect(
     server
