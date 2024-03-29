@@ -9,7 +9,6 @@ export const storeData= async (deviceData)=>{
     {
         const updateData = await Device.findOneAndUpdate(
             {deviceID: deviceData.deviceID},{soildata: deviceData.data},{new:true}
-
         )
         return updateData;
     }
@@ -21,3 +20,24 @@ export const storeData= async (deviceData)=>{
     ).save();
     return newData;
 }
+
+
+export const retrieveData = async (deviceID) => {
+    try {
+      const deviceData = await Device.findOne({ deviceID : deviceID});
+      return deviceData;
+    } catch (error) {
+      console.error('Error while fetching data by device ID:', error);
+      throw new Error('Failed to fetch data by device ID');
+    }
+  };
+
+//   export const findDeviceById = async (deviceID) => {
+//     const device = await Device.findOne({ deviceID: deviceID });
+//     if (!device)
+//       throw new ApiError(
+//         'Device Does Not Exist In Our Database',
+//         StatusCodes.BAD_REQUEST
+//       );
+//     return device;
+//   };
