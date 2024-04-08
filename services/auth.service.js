@@ -81,7 +81,10 @@ export const loginUser = async (loginData) => {
     queryParam.email = username;
     delete queryParam['username'];
   }
-  const loginUser = await User.findOne(queryParam).select('+password');
+  const loginUser = await User.findOne(queryParam).select('+password').populate(
+    'role',
+    '-_id -slug -__v -createdAt -updatedAt'
+  );
   if (!loginUser)
     throw new ApiError('Invalid Credientials', StatusCodes.UNAUTHORIZED);
   const passwordCheck = await loginUser.comparePassword(password);

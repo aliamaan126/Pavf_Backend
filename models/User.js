@@ -3,6 +3,7 @@ import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../services/token.service.js';
 import maap from 'mongoose-autopopulate';
+import Role from './Role.js';
 
 const UserSchema = new mongoose.Schema(
   {
@@ -78,14 +79,18 @@ UserSchema.methods.createRefreshToken = async function () {
   );
 };
 
-UserSchema.methods.newUserResponse = function () {
+UserSchema.methods.newUserResponse =  function () {
   const res = this.toObject();
+  // const getRole = await Role.findById(res.role);
+  // res.role = getRole.name;
+  // console.log(getRole);
   delete res['password'];
   delete res['__v'];
   return res;
 };
 UserSchema.methods.loginResponse = function () {
   const res = this.toObject();
+  res.role = res.role.name;
   delete res['password'];
   delete res['__v'];
   delete res['createdAt'];

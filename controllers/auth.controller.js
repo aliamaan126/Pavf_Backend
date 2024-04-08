@@ -16,6 +16,7 @@ import { renderEjsToHTMLStr } from '../utils/ejs.js';
 import ResetPasswordToken from '../models/ResetPasswordToken.js';
 import { generateString } from '../utils/str.js';
 import User from '../models/User.js';
+import Role from '../models/Role.js';
 
 /**
  * The `register` function is an asynchronous function that handles the registration process by
@@ -52,9 +53,11 @@ export const register = async (req, res, next) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
     });
+    const getRole = await Role.findById(newUser.role);
+    const roleName = getRole.name;
     return res
       .status(StatusCodes.CREATED)
-      .json({ access_token: token, refersh_token: refresh_token, user: newUser.newUserResponse() });
+      .json({ access_token: token, refersh_token: refresh_token, user: {...newUser.newUserResponse(),role:roleName} });
   } catch (error) {
     next(error);
   }
