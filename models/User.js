@@ -42,7 +42,7 @@ const UserSchema = new mongoose.Schema(
     role: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Role',
-      autopopulate:{select: 'slug'}
+      //autopopulate:{select: 'slug'}
     },
   },
   {
@@ -94,6 +94,7 @@ UserSchema.methods.loginResponse = function () {
 };
 UserSchema.methods.publicResponse = function () {
   const res = this.toObject();
+  res.role = res.role.name;
   delete res['password'];
   delete res['__v'];
   delete res['createdAt'];
