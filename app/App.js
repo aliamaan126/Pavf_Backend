@@ -9,6 +9,10 @@ import fileUpload from 'express-fileupload';
 import dotenv from 'dotenv';
 import routes from '../routes/routes.js';
 import logger from '../utils/logger.js';
+import path,{dirname} from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 import {
   routeNotFoundMiddleware,
   defaultErrorHandler,
@@ -33,6 +37,7 @@ class App {
   loadDevPlugins() {}
   loadPlugins() {
     this.app.use(express.json());
+    this.app.use(express.static(path.resolve('__dirname','../public')))
     this.app.use(cors());
     this.app.use(helmet());
     this.app.use(mongoSanitize());

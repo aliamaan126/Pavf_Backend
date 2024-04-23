@@ -7,10 +7,23 @@ const DeviceSchema = new mongoose.Schema(
       required: [true, 'Device ID Is Required'],
       unique: [true, 'Device ID Already Exist'],
     },
-    soildata: {
-      type: Object,
-      default:{}
+    shelfs:[ {
+      shelfId: String,
+      isConfigured: {type:Boolean,default:false},
+      data:{
+        type: Object,
+        default:{}
+      },
+    }],
+    user:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
     },
+    deviceCredentials:{
+      type: Object,
+      required: true,
+      default: {username:'Pavf' , password:'pavf123'}
+    }
     // permissions: {
     //   type: Array,
     //   required: [true, 'At least One Permission Required'],

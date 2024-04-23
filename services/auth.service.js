@@ -55,6 +55,10 @@ export const createUser = async (userData) => {
     password: password,
     role: userRole._id,
   }).save();
+  await newUser.populate({
+    path: 'role',
+    select : '-_id name'
+  })
 
   return newUser;
 };
@@ -81,18 +85,25 @@ export const loginUser = async (loginData) => {
     queryParam.email = username;
     delete queryParam['username'];
   }
-  const loginUser = await User.findOne(queryParam).select('+password').populate(
-    'role',
-    '-_id -slug -__v -createdAt -updatedAt'
-  );
+  const loginUser = await User.findOne(queryParam).select('+password');
+  
   if (!loginUser)
     throw new ApiError('Invalid Credientials', StatusCodes.UNAUTHORIZED);
   const passwordCheck = await loginUser.comparePassword(password);
   if (!passwordCheck)
     throw new ApiError('Invalid Credientials', StatusCodes.UNAUTHORIZED);
 
+    await loginUser.populate({
+      path: 'role',
+      select : '-_id name'
+    })
+    await loginUser.populate({
+      path: 'devices'
+    })
   return loginUser;
 };
+
+
 
 export const bcryptPasswod = async (passwod) => {
   const salt = await bcrypt.genSalt(12);

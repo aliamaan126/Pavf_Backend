@@ -53,11 +53,9 @@ export const register = async (req, res, next) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
     });
-    const getRole = await Role.findById(newUser.role);
-    const roleName = getRole.name;
     return res
       .status(StatusCodes.CREATED)
-      .json({ access_token: token, refersh_token: refresh_token, user: {...newUser.newUserResponse(),role:roleName} });
+      .json({ access_token: token, refersh_token: refresh_token, user: newUser.newUserResponse() });
   } catch (error) {
     next(error);
   }
@@ -158,6 +156,14 @@ export const refreshToken = async (req, res, next) => {
 export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
+
+    const dbUser = await User.findOne({email:email});
+
+    if(!dbUser)
+    {
+      throw new ApiError({email:'Email does not Exist, Please try again!'}, StatusCodes.BAD_REQUEST);
+    }
+
     const template = fs.readFileSync(
       'templates/emails/forgotPassword.email.template.ejs',
       'utf-8'

@@ -40,17 +40,38 @@ const UserSchema = new mongoose.Schema(
       maxlength: 20,
       default: '',
     },
+    image: {
+      type: String,
+      default: '',
+    },
+    address: {
+      type: String,
+      trim: true,
+      maxlength: 30,
+      default: '',
+    },
     role: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Role',
-      //autopopulate:{select: 'slug'}
     },
+    devices: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Device"
+      }
+    ],
+    status:{
+      require: true,
+      type:Boolean,
+      default: true,
+    }
   },
   {
     collection: 'users',
     timestamps: true,
   }
 );
+
 UserSchema.plugin(maap);
 UserSchema.pre('save', async function (next) {
   try {
@@ -71,6 +92,7 @@ UserSchema.methods.createAccessToken = async function () {
     process.env.JWT_SECRET
   );
 };
+
 UserSchema.methods.createRefreshToken = async function () {
   return await generateToken(
     { userId: this._id },
@@ -82,12 +104,13 @@ UserSchema.methods.createRefreshToken = async function () {
 UserSchema.methods.newUserResponse =  function () {
   const res = this.toObject();
   // const getRole = await Role.findById(res.role);
-  // res.role = getRole.name;
+  res.role = res.role.name;
   // console.log(getRole);
   delete res['password'];
   delete res['__v'];
   return res;
 };
+
 UserSchema.methods.loginResponse = function () {
   const res = this.toObject();
   res.role = res.role.name;
@@ -97,6 +120,7 @@ UserSchema.methods.loginResponse = function () {
   delete res['updatedAt'];
   return res;
 };
+
 UserSchema.methods.publicResponse = function () {
   const res = this.toObject();
   res.role = res.role.name;
@@ -106,8 +130,11 @@ UserSchema.methods.publicResponse = function () {
   delete res['updatedAt'];
   return res;
 };
+
 UserSchema.methods.comparePassword = async function (userPassword) {
   const isMatch = await bcrypt.compare(userPassword, this.password);
   return isMatch;
 };
+
+
 export default mongoose.model('User', UserSchema);
