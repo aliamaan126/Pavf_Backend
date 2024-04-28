@@ -25,8 +25,11 @@ export const registerDevice = async (req, res, next) => {
   try {
     const user = await findUser(req.user.userId);
     const {username , password} = req.body
-    const deviCred = {username:username,password:password}
-    const  device = Device.findOne({deviceCredentials:{...deviCred}})
+    const  device = await Device.findOne({deviceCredentials:{username:username,password:password}})
+    // console.log(device);
+    await device.updateOne({user:user._id});
+    user.devices.push(device._id)
+    await user.updateOne({devices:user.devices})
 
     if(!device)
     {
@@ -35,7 +38,6 @@ export const registerDevice = async (req, res, next) => {
 
     // await user.updateOne({devices:[...user.devices, device._id]},{new:true});
 
-    console.log(deviCred);
     res.json({
       user: user.publicResponse(),
     });

@@ -7,14 +7,18 @@ const DeviceSchema = new mongoose.Schema(
       required: [true, 'Device ID Is Required'],
       unique: [true, 'Device ID Already Exist'],
     },
-    shelfs:[ {
-      shelfId: String,
-      isConfigured: {type:Boolean,default:false},
-      data:{
-        type: Object,
-        default:{}
-      },
-    }],
+    shelfs: [
+      {
+        _id: false,
+        isConfigured:{type:Boolean,default:false},
+        shelf_id: { type: String, required: true },
+        soil_data: [
+          {
+            _id: false,
+          }
+        ]
+      }
+    ],
     user:{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'

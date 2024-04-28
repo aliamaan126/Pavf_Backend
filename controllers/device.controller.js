@@ -11,9 +11,28 @@ export const storeData = async (req, res, next) => {
 export const readData = async (req, res, next) => {
   try {
     const {id} = req.params;
-    const sensor = await Device.findOne({deviceID:id});
+    const device = await Device.findOne({_id:id});
     
-    res.status(200).json(sensor);
+    res.status(200).json(device);
+  } catch (error) {
+    next(error);
+  }
+};
+export const readShelfData = async (req, res, next) => {
+  try {
+    const {id} = req.params;
+    const device = await Device.findOne({deviceID:id});
+    
+    res.status(200).json(device.shelfs);
+  } catch (error) {
+    next(error);
+  }
+};
+export const allDevices = async (req, res, next) => {
+  try {
+    const devices =await Device.find({})
+    
+    res.status(200).json(devices);
   } catch (error) {
     next(error);
   }
@@ -21,14 +40,15 @@ export const readData = async (req, res, next) => {
 
 export const createDevice = async (req, res, next) => {
   try {
-    const {username,password,shelfs:allShelf} = req.body;
+    const { username, password, shelf_data } = req.body;
     const newDevice = new Device();
-    
+
     newDevice.deviceID = uuidv4();
     if(username && password){
       newDevice.deviceCredentials = {username:username, password:password}
     }
-    newDevice.shelfs = {};
+    newDevice.shelfs = [...shelf_data];
+   
     await newDevice.save();
     res.status(200).json(newDevice);
 
