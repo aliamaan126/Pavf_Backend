@@ -23,5 +23,14 @@ mainRouter.get('/seeder', async (req, res) => {
   }
 });
 
+mainRouter.post('/sensor-data', async (req, res , next ) => {
+  try {
+      console.log(req.body);
+
+      return res.json(req.body);
+  } catch (error) {
+      next(error);
+  }
+});
 
 export default mainRouter;

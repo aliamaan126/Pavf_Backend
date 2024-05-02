@@ -15,6 +15,11 @@ const DeviceSchema = new mongoose.Schema(
         soil_data: [
           {
             _id: false,
+            Moisture: { type: Number },
+            Temperature: { type: Number },
+            Conductivity: { type: Number },
+            pH: { type: Number },
+            DateTime:{type: Date}
           }
         ]
       }
