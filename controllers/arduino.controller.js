@@ -1,47 +1,60 @@
+import {  StatusCodes } from "../errors/ApiError.js";
 import Device from "../models/Device.js";
+import { myTimeZoneDate } from "../utils/helper.utils.js";
+import "core-js/actual/array/group-by.js"
 
 export const saveSensorData = async (req, res, next) => {
     try {
-
-        const { deviceID, shelfID, shelfData_01 } = req.body;
-
-        // Find the device based on deviceID
-        const device = await Device.findOne({ deviceID });
-        if (!device) {
-            return res.status(404).json({ message: 'Device not found' });
-        }
-        const newShelfData = device.shelfs.map((shelf) => {
-            if (shelf.shelf_id === shelfID) {
-                shelf.soil_data.push({...shelfData_01,DateTime:new Date().toLocaleString()}); 
-            }
-            return shelf;
-        });
-        device.shelfs = newShelfData;
-        console.log(device);
-        await device.save(); 
-
-        res.json({ message: 'Device updated successfully', device });
-    } catch (error) {
-        console.error('Error saving sensor data:', error);
+        console.log(req.body);
+        const { deviceID,shelfData } = req.body; 
+        const device = await Device.findOne({ deviceID: deviceID });
+        const newShelfs = device.shelfs.map((s) => {
+          if (s.shelf_id == '1') {
+            s.soil_data =[...s.soil_data,{...shelfData,date_time:myTimeZoneDate()}]          }
+          return s
+        })
+        await device.updateOne({shelfs:newShelfs})
+        return res.status(StatusCodes.ACCEPTED).json(device);
+        
+      } catch (error) {
         next(error);
-    }
+      }
 };
 
-
-export const fetchSensorData = async (req, res, next) => {
+export const getSingleShelfSensorData = async (req, res, next) => {
     try {
-        const { deviceID} = req.body;
+      const { deviceId, shelfId } = req.query
+      const device = await Device.findOne({deviceID:deviceId})
+      const desireShelfData = device.shelfs.filter((shelf) => {
+          return shelf.shelf_id == shelfId
+        })
+      const soilData = desireShelfData[0].soil_data
+      // const res = Object.groupBy(soilData,({})=>{})
+        return res.status(StatusCodes.ACCEPTED).json(soilData);
+        
+      } catch (error) {
+        next(error);
+      }
+  };
+  export const getSingleShelfSingleElementData = async (req, res, next) => {
+    // try {
+      const { deviceId, shelfId,element } = req.query
+      const device = await Device.findOne({deviceID:deviceId})
+      const desireShelfData = device.shelfs.filter((shelf) => {
+          return shelf.shelf_id == shelfId
+        })
+    const soilData = desireShelfData[0].soil_data.map((d) => {
+      let ob = { date_time: d.date_time }
+      ob[element] = d[element]
+        return ob
+      })
+      // const groupb = Object.groupBy(soilData,(data)=> data.date)
+      const peopleByAge = soilData.groupBy((d)=>d.date_time.split(',')[0])
+      // const res = Object.groupBy(soilData,({})=>{})
+        return res.status(StatusCodes.ACCEPTED).json(peopleByAge);
+        
+      // } catch (error) {
+        // next(error);
+      // }
+  };
 
-        // Find the device in the database based on deviceID
-        const device = await Device.findOne({ deviceID });
-
-        if (!device) {
-            return res.status(404).json({ message: 'Device not found' });
-        }
-        return res.json({ device });
-    } catch (error) {
-        // Handle errors
-        console.error('Error fetching sensor data:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });
-    }
-};

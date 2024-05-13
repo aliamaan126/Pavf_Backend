@@ -17,6 +17,7 @@ import {
   routeNotFoundMiddleware,
   defaultErrorHandler,
 } from '../middlewares/middleware.js';
+import frontend from '../routes/frontend.routes.js';
 
 class App {
   constructor({ port }) {
@@ -37,7 +38,7 @@ class App {
   loadDevPlugins() {}
   loadPlugins() {
     this.app.use(express.json());
-    this.app.use(express.static(path.resolve('__dirname','../public')))
+    this.app.use(express.static(path.resolve(__dirname,'../public')))
     this.app.use(cors());
     this.app.use(helmet());
     this.app.use(mongoSanitize());
@@ -47,6 +48,7 @@ class App {
   }
   loadRoutes() {
     this.app.use('/api/v1', routes);
+    this.app.use('/*', frontend);
   }
   loadExceptionMiddlewares() {
     this.app.use(routeNotFoundMiddleware);

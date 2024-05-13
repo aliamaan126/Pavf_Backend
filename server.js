@@ -1,9 +1,17 @@
 import App from './app/App.js';
-import PavfSocket from './utils/PavfSocket.js'
 import mongodbConnect from './database/mongodb.js';
+import PavfWebSocketServer from './utils/PavfWebSocketServer.js';
 
 const myServer = new App({ port: process.env.PORT || 3000 });
-const pavfSocketServer = new PavfSocket(myServer.server)
+export const pavfSoc = new PavfWebSocketServer(myServer.server);
 
+
+// const dataTemp = {
+//     action: 'shelf_light',
+//     value:1
+// }
+// setInterval(() => {
+//     pwsss.pwss.broadcast(JSON.stringify(dataTemp));
+//  }, 5000);
 mongodbConnect();
 myServer.startServer();

@@ -20,6 +20,7 @@
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cookie-session": "^2.0.0",
+    "core-js": "^3.37.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
@@ -39,6 +40,7 @@
     "trim-request": "^1.0.6",
     "uuid": "^9.0.1",
     "validator": "^13.11.0",
+    "websocket": "^1.0.34",
     "winston": "^3.11.0"
   },
   "devDependencies": {

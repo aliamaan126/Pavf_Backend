@@ -10,4 +10,5 @@ deviceRouter.post('/create', trimRequest.all, createDevice);
 deviceRouter.get('/:id/fetch', trimRequest.all, readData);
 deviceRouter.get('/data/:id/fetch', trimRequest.all, readShelfData);
 
+
 export default deviceRouter;

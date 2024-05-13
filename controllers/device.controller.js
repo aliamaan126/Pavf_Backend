@@ -1,4 +1,4 @@
-import { StatusCodes } from '../errors/ApiError.js';
+import {StatusCodes } from '../errors/ApiError.js';
 import Device from '../models/Device.js';
 import { retrieveData, storeData as sd } from '../services/device.service.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -65,3 +65,5 @@ export const deleteData = async (req, res, next) => {
     next(error);
   }
 };
+
+

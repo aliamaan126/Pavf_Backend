@@ -13,14 +13,7 @@ const DeviceSchema = new mongoose.Schema(
         isConfigured:{type:Boolean,default:false},
         shelf_id: { type: String, required: true },
         soil_data: [
-          {
-            _id: false,
-            Moisture: { type: Number },
-            Temperature: { type: Number },
-            Conductivity: { type: Number },
-            pH: { type: Number },
-            DateTime:{type: Date}
-          }
+          {}
         ]
       }
     ],

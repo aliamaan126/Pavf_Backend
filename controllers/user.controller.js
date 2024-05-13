@@ -1,6 +1,6 @@
 import fs from 'fs';
 import validator from 'validator';
-import ApiError, { StatusCodes } from '../errors/ApiError.js';
+import ApiError, { ReasonPhrases, StatusCodes } from '../errors/ApiError.js';
 import Device from '../models/Device.js';
 import User from '../models/User.js';
 import { findUser } from '../services/user.service.js';
@@ -8,6 +8,9 @@ import bcrypt from 'bcryptjs';
 import path,{dirname} from 'path';
 import { fileURLToPath } from 'url';
 import { uploadImage } from '../services/imageUpload.service.js';
+import { pavfSoc } from '../server.js';
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 export const profile = async (req, res, next) => {
@@ -27,6 +30,9 @@ export const registerDevice = async (req, res, next) => {
     const {username , password} = req.body
     const  device = await Device.findOne({deviceCredentials:{username:username,password:password}})
     // console.log(device);
+    if(device.user!=null)
+    throw new ApiError("Device already Connected to User",StatusCodes.UNAUTHORIZED);
+
     await device.updateOne({user:user._id});
     user.devices.push(device._id)
     await user.updateOne({devices:user.devices})
@@ -109,3 +115,20 @@ export const passwordUpdate = async (req, res, next) => {
    next(error);
  }
 };
+
+
+export const deviceControl = async (req, res, next) => {
+  try {
+    const { deviceID,action,state,value } = req.body;
+    const bdata = {
+        deviceID:deviceID,
+        action: action,
+        state: state,
+        value:value
+      }
+      pavfSoc.pwss.broadcast(JSON.stringify(bdata));
+    res.status(StatusCodes.OK).json(ReasonPhrases.OK);
+  } catch (error) {
+    next(error);
+  }
+}
