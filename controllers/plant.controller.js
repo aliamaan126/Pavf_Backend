@@ -23,3 +23,12 @@ export const getPlant = async (req, res, next) => {
       next(error);
   }
 };
+export const getAllPlant = async (req, res, next) => {
+  try {
+    const allPlant = await Plant.find({});
+    return res.status(StatusCodes.OK).json(allPlant);
+      
+  } catch (error) {
+      next(error);
+  }
+};

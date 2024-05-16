@@ -6,11 +6,12 @@ import "core-js/actual/array/group-by.js"
 export const saveSensorData = async (req, res, next) => {
     try {
         console.log(req.body);
-        const { deviceID,shelfData } = req.body; 
+        const { deviceID,shelfData_01 } = req.body; 
         const device = await Device.findOne({ deviceID: deviceID });
         const newShelfs = device.shelfs.map((s) => {
           if (s.shelf_id == '1') {
-            s.soil_data =[...s.soil_data,{...shelfData,date_time:myTimeZoneDate()}]          }
+            s.soil_data =[...s.soil_data,{...shelfData_01,date_time:myTimeZoneDate()}]        
+            }
           return s
         })
         await device.updateOne({shelfs:newShelfs})
