@@ -10,6 +10,8 @@ const DeviceSchema = new mongoose.Schema(
     shelfs: [
       {
         _id: false,
+        plantation_date:{type:String},
+        plant_data:{type:Object},
         isConfigured:{type:Boolean,default:false},
         shelf_id: { type: String, required: true },
         soil_data: [

@@ -1,6 +1,6 @@
 import express from 'express';
 import trimRequest from 'trim-request';
-import { deviceControl, passwordUpdate, profile, profileUpdate, registerDevice } from '../controllers/user.controller.js';
+import { addPlant, deviceControl, passwordUpdate, profile, profileUpdate, registerDevice } from '../controllers/user.controller.js';
 
 
 const userRouter = new express.Router();
@@ -11,6 +11,7 @@ userRouter.post('/update', trimRequest.all, profileUpdate);
 userRouter.post('/password/update', trimRequest.all, passwordUpdate);
 userRouter.post('/deviceBind', trimRequest.all, registerDevice);
 userRouter.post('/device-control', trimRequest.all, deviceControl);
+userRouter.post('/add-plant', trimRequest.all, addPlant);
 
 
 

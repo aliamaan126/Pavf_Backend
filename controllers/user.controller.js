@@ -8,7 +8,8 @@ import bcrypt from 'bcryptjs';
 import path,{dirname} from 'path';
 import { fileURLToPath } from 'url';
 import { uploadImage } from '../services/imageUpload.service.js';
-import { pavfSoc } from '../server.js';
+import { response } from 'express';
+// import { pavfSoc } from '../server.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -126,9 +127,30 @@ export const deviceControl = async (req, res, next) => {
         state: state,
         value:value
       }
-      pavfSoc.pwss.broadcast(JSON.stringify(bdata));
+      // pavfSoc.pwss.broadcast(JSON.stringify(bdata));
     res.status(StatusCodes.OK).json(ReasonPhrases.OK);
   } catch (error) {
     next(error);
+  }
+}
+
+
+export const addPlant = async (req, res, next) => {
+  try {
+    const {deviceId,shelfId,plantation_date,plant_data}= req.body;
+    const device = await Device.findOne({ deviceID: deviceId });
+
+    const newShelfs = device.shelfs.map((shelf)=>{
+      if(shelf.shelf_id==shelfId){
+        shelf.plantation_date=plantation_date;
+        shelf.plant_data=plant_data;
+      }
+      return shelf;
+    });
+    await device.updateOne({shelfs:newShelfs})
+
+    return res.status(StatusCodes.ACCEPTED).json(device);
+  } catch (error) {
+    next(error)
   }
 }

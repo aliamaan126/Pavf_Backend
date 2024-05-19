@@ -28,6 +28,7 @@ export const readShelfData = async (req, res, next) => {
     next(error);
   }
 };
+
 export const allDevices = async (req, res, next) => {
   try {
     const devices =await Device.find({})
