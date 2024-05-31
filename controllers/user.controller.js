@@ -14,9 +14,11 @@ import { response } from 'express';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
 export const profile = async (req, res, next) => {
   try {
     const user = await findUser(req.user.userId);
+    await user.populate({path: "devices",select:"deviceCredentials shelfs deviceID"})
     res.json({
       user: user.publicResponse(),
     });
@@ -44,10 +46,41 @@ export const registerDevice = async (req, res, next) => {
     }
 
     // await user.updateOne({devices:[...user.devices, device._id]},{new:true});
+    await user.populate({path: "devices",select:"deviceCredentials shelfs deviceID"})
 
-    res.json({
+    return res.json({
       user: user.publicResponse(),
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteDevice = async (req, res, next) => {
+  try {
+    const user = await findUser(req.user.userId);
+    // await user.populate({path:"devices"})
+    const {username} = req.body
+    const device = await Device.findOne({ 'deviceCredentials.username': username,user:user._id });
+
+    if(!device)
+      throw new ApiError("Invalid Device",StatusCodes.UNAUTHORIZED);
+
+    // console.log(device.user.toString());
+    // console.log(user._id.toString());
+    // console.log(user);
+
+    await device.updateOne({user:null});
+    const deviceIndex = user.devices.indexOf(device._id);
+    user.devices.splice(deviceIndex,1);
+    await user.updateOne({devices:user.devices})
+
+    await user.populate({path: "devices",select:"deviceCredentials shelfs deviceID"})
+    
+    return res.json({
+      user: user.publicResponse(),
+    });
+
   } catch (error) {
     next(error);
   }
@@ -137,13 +170,13 @@ export const deviceControl = async (req, res, next) => {
 
 export const addPlant = async (req, res, next) => {
   try {
-    const {deviceId,shelfId,plantation_date,plant_data}= req.body;
-    const device = await Device.findOne({ deviceID: deviceId });
-
+    const {deviceId,shelfId,plant_data}= req.body;
+    const device = await Device.findOne({ _id: deviceId });
+    // console.log(device);
     const newShelfs = device.shelfs.map((shelf)=>{
       if(shelf.shelf_id==shelfId){
-        shelf.plantation_date=plantation_date;
         shelf.plant_data=plant_data;
+        shelf.isConfigured=true;
       }
       return shelf;
     });

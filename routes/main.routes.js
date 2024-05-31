@@ -1,6 +1,7 @@
 import express from 'express';
 import { StatusCodes } from '../errors/ApiError.js';
 import { roleSeeder, userSeeder } from '../database/seeders/seeder.js';
+import { pavfSoc } from '../server.js';
 
 const mainRouter = new express.Router();
 
@@ -23,11 +24,13 @@ mainRouter.get('/seeder', async (req, res) => {
   }
 });
 
-mainRouter.post('/sensor-data', async (req, res , next ) => {
+mainRouter.get('/flutter-notification', async (req, res , next ) => {
   try {
-      console.log(req.body);
-
-      return res.json(req.body);
+      pavfSoc.pavfS.emit("flutterNotification",{
+        title:"Hello",
+        message:"world"
+      });
+      return res.json("OK");
   } catch (error) {
       next(error);
   }

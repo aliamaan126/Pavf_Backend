@@ -97,6 +97,8 @@ export const loginUser = async (loginData) => {
       path: 'role',
       select : '-_id name'
     })
+    await loginUser.populate({path: "devices",select:"deviceCredentials shelfs deviceID"})
+
     // await loginUser.populate({
     //   path: 'devices'
     // })

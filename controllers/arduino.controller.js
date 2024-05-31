@@ -59,3 +59,18 @@ export const getSingleShelfSensorData = async (req, res, next) => {
       // }
   };
 
+export const fetchDevicePlants = async (req, res, next) => {
+  try {
+    const { deviceId } = req.query;
+    const device = await Device.findOne({deviceID:deviceId}) 
+    const data = device.shelfs.map((shelf)=>{
+
+      return {
+        shelfId:shelf.shelf_id,
+        plantData:shelf.plant_data
+      }
+    })
+    return res.status(StatusCodes.ACCEPTED).json({action:"loadplantdata",data:[...data]})} catch (error) {
+    next(error);
+  }
+}
